@@ -1,0 +1,9 @@
+<div style="font-family: Arial, sans-serif; font-size: 14px; color: #222;">
+	<h2>Rücksendung abgelehnt</h2>
+	<p>Ihre Rücksendung <strong>{{ returnRecord.return_number }}</strong> wurde abgelehnt.</p>
+	{% if reason %}
+		<p>Grund: {{ reason }}</p>
+	{% endif %}
+</div>
+
+

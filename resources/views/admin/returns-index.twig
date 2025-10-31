@@ -1,0 +1,54 @@
+{% extends "Ceres::PageDesign.PageDesign" %}
+
+{% block PageBody %}
+<div class="container mt-4">
+	<h1 class="h3 mb-3">Rücksendungen</h1>
+
+	<div class="row mb-3">
+		<div class="col">
+			<div class="card">
+				<div class="card-body d-flex gap-4">
+					<div><strong>Gesamt:</strong> {{ stats.total }}</div>
+					<div><strong>Ausstehend:</strong> {{ stats.pending }}</div>
+					<div><strong>Genehmigt:</strong> {{ stats.approved }}</div>
+					<div><strong>Abgeschlossen:</strong> {{ stats.completed }}</div>
+					<div><strong>Erstattet (Summe):</strong> {{ stats.totalRefunded | number_format(2, ',', '.') }}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-striped align-middle">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Rücksendenummer</th>
+					<th>Status</th>
+					<th>Kunde</th>
+					<th>Erstellt</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for r in returns.data %}
+				<tr>
+					<td>{{ r.id }}</td>
+					<td>{{ r.return_number }}</td>
+					<td>{{ r.status }}</td>
+					<td>{{ r.customer_name }}<br><small class="text-muted">{{ r.customer_email }}</small></td>
+					<td>{{ r.created_at | date('d.m.Y H:i') }}</td>
+					<td>
+						<a class="btn btn-sm btn-outline-primary" href="/admin/returns/{{ r.id }}">Details</a>
+					</td>
+				</tr>
+				{% else %}
+				<tr><td colspan="6" class="text-muted">Keine Rücksendungen gefunden.</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}
+
+

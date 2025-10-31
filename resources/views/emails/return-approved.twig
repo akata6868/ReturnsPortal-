@@ -1,0 +1,10 @@
+<div style="font-family: Arial, sans-serif; font-size: 14px; color: #222;">
+	<h2>Rücksendung genehmigt</h2>
+	<p>Ihre Rücksendung <strong>{{ returnRecord.return_number }}</strong> wurde genehmigt.</p>
+	{% if labelUrl %}
+		<p>Ihr Etikett: <a href="{{ labelUrl }}">Etikett herunterladen</a></p>
+	{% endif %}
+	<p>Status verfolgen: <a href="{{ trackingUrl }}">Rücksendung verfolgen</a></p>
+</div>
+
+
