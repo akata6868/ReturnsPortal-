@@ -1,0 +1,13 @@
+{% extends "Ceres::PageDesign.PageDesign" %}
+
+{% block PageBody %}
+<div class="container mt-5">
+	<div class="alert alert-danger">
+		<h4 class="alert-heading">Fehler</h4>
+		<p>{{ error | default('Ein Fehler ist aufgetreten.') }}</p>
+		<a href="/admin/returns" class="btn btn-secondary">Zurück</a>
+	</div>
+</div>
+{% endblock %}
+
+

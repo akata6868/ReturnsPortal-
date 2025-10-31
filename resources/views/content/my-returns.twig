@@ -1,0 +1,35 @@
+{% extends "Ceres::PageDesign.PageDesign" %}
+
+{% block PageBody %}
+<div class="container mt-5">
+	<h1 class="h3 mb-4">Meine Rücksendungen</h1>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Rücksendenummer</th>
+					<th>Status</th>
+					<th>Erstellt</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for r in returns %}
+					<tr>
+						<td>{{ r.return_number }}</td>
+						<td>{{ r.status }}</td>
+						<td>{{ r.created_at | date('d.m.Y H:i') }}</td>
+						<td>
+							<a class="btn btn-sm btn-outline-primary" href="/returns/track/{{ r.id }}">Anzeigen</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr><td colspan="4" class="text-muted">Keine Rücksendungen gefunden.</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,24 @@
+{% extends "Ceres::PageDesign.PageDesign" %}
+
+{% block PageBody %}
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-10">
+			<div class="card">
+				<div class="card-header">
+					<h3 class="h5">Rücksendeetikett</h3>
+				</div>
+				<div class="card-body">
+					<p><strong>Rücksendenummer:</strong> {{ return.return_number }}</p>
+					<p><strong>Trackingnummer:</strong> {{ barcode }}</p>
+					{% if labelData.labelUrl %}
+						<a class="btn btn-primary" href="{{ labelData.labelUrl }}" target="_blank">Etikett herunterladen</a>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
