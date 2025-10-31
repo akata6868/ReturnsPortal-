@@ -6,7 +6,7 @@ use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Plugin\Log\Loggable;
 use ReturnsPortal\Repositories\ReturnRepository;
-use ReturnsPortal\Models\Return;
+use ReturnsPortal\Models\ReturnModel;
 
 /**
  * Class RefundService
@@ -98,7 +98,7 @@ class RefundService
             }
 
             // Update return status
-            $return->status = Return::STATUS_REFUNDED;
+            $return->status = ReturnModel::STATUS_REFUNDED;
             $return->refund_method = $method;
             $return->refund_amount = $amount;
             $return->refund_status = 'completed';
@@ -273,7 +273,7 @@ class RefundService
      */
     public function canRefund(Return $return): array
     {
-        if ($return->status !== Return::STATUS_RECEIVED) {
+        if ($return->status !== ReturnModel::STATUS_RECEIVED) {
             return [
                 'canRefund' => false,
                 'reason' => 'Return must be received before refund'

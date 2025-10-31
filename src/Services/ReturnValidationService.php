@@ -66,11 +66,11 @@ class ReturnValidationService
 
         // Check return period
         $returnPeriodDays = $this->config->get('ReturnsPortal.autoApprovalDays', 14);
-        $orderDate = new \DateTime($order->createdAt);
-        $today = new \DateTime();
-        $diff = $today->diff($orderDate);
+        $orderTime = strtotime($order->createdAt);
+        $today = time();
+        $diff = floor(($today - $orderTime) / 86400); // days difference
         
-        if ($diff->days > $returnPeriodDays) {
+        if ($diff > $returnPeriodDays) {
             return [
                 'eligible' => false,
                 'message' => 'Return period has expired (max ' . $returnPeriodDays . ' days)'
@@ -89,14 +89,13 @@ class ReturnValidationService
             }
         }
 
-        $deadline = clone $orderDate;
-        $deadline->add(new \DateInterval('P' . $returnPeriodDays . 'D'));
+        $deadlineTime = $orderTime + ($returnPeriodDays * 86400);
 
         return [
             'eligible' => true,
             'message' => 'Order is eligible for return',
-            'deadline' => $deadline->format('Y-m-d'),
-            'daysLeft' => $returnPeriodDays - $diff->days
+            'deadline' => date('Y-m-d', $deadlineTime),
+            'daysLeft' => $returnPeriodDays - $diff
         ];
     }
 

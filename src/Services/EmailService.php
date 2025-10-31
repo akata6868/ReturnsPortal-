@@ -5,7 +5,7 @@ namespace ReturnsPortal\Services;
 use Plenty\Modules\Frontend\Services\SystemService;
 use Plenty\Plugin\Mail\Contracts\MailerContract;
 use Plenty\Plugin\Templates\Twig;
-use ReturnsPortal\Models\Return;
+use ReturnsPortal\Models\ReturnModel;
 
 /**
  * Class EmailService

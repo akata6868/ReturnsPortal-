@@ -27,8 +27,35 @@
   ],
   "require": [],
   "javaScriptFiles": [],
-  "containers": [],
-  "dataProviders": [],
+  "containers": [
+    {
+      "key": "ReturnsPortal.ReturnForm",
+      "name": "Return Form",
+      "description": "Customer return request form"
+    },
+    {
+      "key": "ReturnsPortal.ReturnTracking",
+      "name": "Return Tracking",
+      "description": "Track return status"
+    },
+    {
+      "key": "ReturnsPortal.MyReturns",
+      "name": "My Returns",
+      "description": "Customer return history"
+    }
+  ],
+  "dataProviders": [
+    {
+      "key": "ReturnsPortal\\Containers\\ReturnFormContainer",
+      "name": "Return Form Container",
+      "description": "Provides return form content"
+    },
+    {
+      "key": "ReturnsPortal\\Containers\\ReturnTrackingContainer",
+      "name": "Return Tracking Container",
+      "description": "Provides return tracking content"
+    }
+  ],
   "dependencies": {
     "IO": ">=5.0.0"
   },

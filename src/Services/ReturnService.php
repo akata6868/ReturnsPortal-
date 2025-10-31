@@ -7,7 +7,7 @@ use Plenty\Modules\Plugin\Libs\Contracts\LibraryCallContract;
 use Plenty\Plugin\ConfigRepository;
 use Plenty\Plugin\Log\Loggable;
 use ReturnsPortal\Repositories\ReturnRepository;
-use ReturnsPortal\Models\Return;
+use ReturnsPortal\Models\ReturnModel;
 use ReturnsPortal\Events\ReturnCreated;
 use ReturnsPortal\Events\ReturnStatusChanged;
 use ReturnsPortal\Events\ReturnApproved;
@@ -61,7 +61,7 @@ class ReturnService
      * @param array $data
      * @return Return
      */
-    public function createReturn(array $data): Return
+    public function createReturn(array $data): ReturnModel
     {
         try {
             // Create return
@@ -113,18 +113,18 @@ class ReturnService
                 return ['success' => false, 'message' => 'Return not found'];
             }
 
-            if ($return->status !== Return::STATUS_PENDING) {
+            if ($return->status !== ReturnModel::STATUS_PENDING) {
                 return ['success' => false, 'message' => 'Only pending returns can be approved'];
             }
 
-            $return->status = Return::STATUS_APPROVED;
+            $return->status = ReturnModel::STATUS_APPROVED;
             $return->admin_notes = $adminNote;
             $return->approved_at = date('Y-m-d H:i:s');
             
             $this->returnRepository->update($return);
 
             // Create status history entry
-            $this->createStatusHistory($returnId, Return::STATUS_APPROVED, $adminNote);
+            $this->createStatusHistory($returnId, ReturnModel::STATUS_APPROVED, $adminNote);
 
             // Fire event
             pluginApp(ReturnApproved::class, ['return' => $return])->fire();
@@ -169,14 +169,14 @@ class ReturnService
                 return ['success' => false, 'message' => 'Cannot reject completed return'];
             }
 
-            $return->status = Return::STATUS_REJECTED;
+            $return->status = ReturnModel::STATUS_REJECTED;
             $return->rejection_reason = $rejectionReason;
             $return->admin_notes = $adminNote;
             
             $this->returnRepository->update($return);
 
             // Create status history
-            $this->createStatusHistory($returnId, Return::STATUS_REJECTED, $adminNote);
+            $this->createStatusHistory($returnId, ReturnModel::STATUS_REJECTED, $adminNote);
 
             // Send email
             if ($this->config->get('ReturnsPortal.sendEmailNotifications', true)) {
@@ -215,7 +215,7 @@ class ReturnService
                 return ['success' => false, 'message' => 'Return not found'];
             }
 
-            $return->status = Return::STATUS_RECEIVED;
+            $return->status = ReturnModel::STATUS_RECEIVED;
             $return->received_at = date('Y-m-d H:i:s');
             
             if (!empty($qualityNotes)) {
@@ -230,7 +230,7 @@ class ReturnService
             }
 
             // Create status history
-            $this->createStatusHistory($returnId, Return::STATUS_RECEIVED, $qualityNotes);
+            $this->createStatusHistory($returnId, ReturnModel::STATUS_RECEIVED, $qualityNotes);
 
             // Fire event
             pluginApp(ReturnReceived::class, ['return' => $return])->fire();
@@ -269,15 +269,15 @@ class ReturnService
     public function getStatusLabel(string $status): string
     {
         $labels = [
-            Return::STATUS_PENDING => 'Pending Approval',
-            Return::STATUS_APPROVED => 'Approved',
-            Return::STATUS_REJECTED => 'Rejected',
-            Return::STATUS_SHIPPED => 'Shipped Back',
-            Return::STATUS_RECEIVED => 'Received',
-            Return::STATUS_INSPECTING => 'Under Inspection',
-            Return::STATUS_REFUNDED => 'Refunded',
-            Return::STATUS_COMPLETED => 'Completed',
-            Return::STATUS_CANCELLED => 'Cancelled'
+            ReturnModel::STATUS_PENDING => 'Pending Approval',
+            ReturnModel::STATUS_APPROVED => 'Approved',
+            ReturnModel::STATUS_REJECTED => 'Rejected',
+            ReturnModel::STATUS_SHIPPED => 'Shipped Back',
+            ReturnModel::STATUS_RECEIVED => 'Received',
+            ReturnModel::STATUS_INSPECTING => 'Under Inspection',
+            ReturnModel::STATUS_REFUNDED => 'Refunded',
+            ReturnModel::STATUS_COMPLETED => 'Completed',
+            ReturnModel::STATUS_CANCELLED => 'Cancelled'
         ];
 
         return $labels[$status] ?? $status;
@@ -289,7 +289,7 @@ class ReturnService
      */
     public function getAvailableStatuses(): array
     {
-        $statuses = Return::getStatuses();
+        $statuses = ReturnModel::getStatuses();
         $result = [];
         
         foreach ($statuses as $status) {
@@ -311,16 +311,16 @@ class ReturnService
     {
         $actions = [];
 
-        if ($return->status === Return::STATUS_PENDING) {
+        if ($return->status === ReturnModel::STATUS_PENDING) {
             $actions[] = 'approve';
             $actions[] = 'reject';
         }
 
-        if ($return->status === Return::STATUS_APPROVED) {
+        if ($return->status === ReturnModel::STATUS_APPROVED) {
             $actions[] = 'mark_shipped';
         }
 
-        if (in_array($return->status, [Return::STATUS_SHIPPED, Return::STATUS_APPROVED])) {
+        if (in_array($return->status, [ReturnModel::STATUS_SHIPPED, ReturnModel::STATUS_APPROVED])) {
             $actions[] = 'mark_received';
         }
 

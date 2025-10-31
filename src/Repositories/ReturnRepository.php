@@ -3,7 +3,7 @@
 namespace ReturnsPortal\Repositories;
 
 use Plenty\Modules\Plugin\DataBase\Contracts\DataBase;
-use ReturnsPortal\Models\Return;
+use ReturnsPortal\Models\ReturnModel;
 use ReturnsPortal\Models\ReturnItem;
 
 /**
@@ -31,9 +31,9 @@ class ReturnRepository
      * @param int $id
      * @return Return|null
      */
-    public function findById(int $id): ?Return
+    public function findById(int $id): ?ReturnModel
     {
-        return $this->database->find(Return::class, $id);
+        return $this->database->find(ReturnModel::class, $id);
     }
 
     /**
@@ -41,7 +41,7 @@ class ReturnRepository
      * @param int $id
      * @return Return|null
      */
-    public function findByIdWithRelations(int $id): ?Return
+    public function findByIdWithRelations(int $id): ?ReturnModel
     {
         $return = $this->findById($id);
         
@@ -60,7 +60,7 @@ class ReturnRepository
      */
     public function findByContactId(int $contactId): array
     {
-        return $this->database->query(Return::class)
+        return $this->database->query(ReturnModel::class)
             ->where('contact_id', '=', $contactId)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -71,9 +71,9 @@ class ReturnRepository
      * @param string $returnNumber
      * @return Return|null
      */
-    public function findByReturnNumber(string $returnNumber): ?Return
+    public function findByReturnNumber(string $returnNumber): ?ReturnModel
     {
-        $results = $this->database->query(Return::class)
+        $results = $this->database->query(ReturnModel::class)
             ->where('return_number', '=', $returnNumber)
             ->get();
         
@@ -89,7 +89,7 @@ class ReturnRepository
      */
     public function search(array $filters, int $page = 1, int $perPage = 50): array
     {
-        $query = $this->database->query(Return::class);
+        $query = $this->database->query(ReturnModel::class);
 
         // Apply filters
         if (!empty($filters['status'])) {
@@ -137,9 +137,9 @@ class ReturnRepository
      * @param array $data
      * @return Return
      */
-    public function create(array $data): Return
+    public function create(array $data): ReturnModel
     {
-        $return = pluginApp(Return::class);
+        $return = pluginApp(ReturnModel::class);
         
         $return->return_number = $this->generateReturnNumber();
         $return->order_id = $data['order_id'];
@@ -150,7 +150,7 @@ class ReturnRepository
         $return->return_reason = $data['return_reason'];
         $return->customer_notes = $data['customer_notes'] ?? '';
         $return->total_amount = $data['total_amount'] ?? 0;
-        $return->status = Return::STATUS_PENDING;
+        $return->status = ReturnModel::STATUS_PENDING;
         $return->created_at = date('Y-m-d H:i:s');
         $return->updated_at = date('Y-m-d H:i:s');
 
@@ -162,7 +162,7 @@ class ReturnRepository
      * @param Return $return
      * @return Return
      */
-    public function update(Return $return): Return
+    public function update(Return $return): ReturnModel
     {
         $return->updated_at = date('Y-m-d H:i:s');
         return $this->database->save($return);
@@ -243,20 +243,20 @@ class ReturnRepository
      */
     public function getStatistics(): array
     {
-        $totalReturns = $this->database->query(Return::class)->count();
-        $pendingReturns = $this->database->query(Return::class)
-            ->where('status', '=', Return::STATUS_PENDING)
+        $totalReturns = $this->database->query(ReturnModel::class)->count();
+        $pendingReturns = $this->database->query(ReturnModel::class)
+            ->where('status', '=', ReturnModel::STATUS_PENDING)
             ->count();
-        $approvedReturns = $this->database->query(Return::class)
-            ->where('status', '=', Return::STATUS_APPROVED)
+        $approvedReturns = $this->database->query(ReturnModel::class)
+            ->where('status', '=', ReturnModel::STATUS_APPROVED)
             ->count();
-        $completedReturns = $this->database->query(Return::class)
-            ->where('status', '=', Return::STATUS_COMPLETED)
+        $completedReturns = $this->database->query(ReturnModel::class)
+            ->where('status', '=', ReturnModel::STATUS_COMPLETED)
             ->count();
         
         // Calculate total refund amount
-        $returns = $this->database->query(Return::class)
-            ->whereIn('status', [Return::STATUS_REFUNDED, Return::STATUS_COMPLETED])
+        $returns = $this->database->query(ReturnModel::class)
+            ->whereIn('status', [ReturnModel::STATUS_REFUNDED, ReturnModel::STATUS_COMPLETED])
             ->get();
         
         $totalRefunded = 0;
